@@ -1,6 +1,6 @@
 ---
 title: "CTA-ED Exercise 4: Scaling techniques"
-author: "[Your full name here]"
+author: "[River Kim]"
 date: "6/03/2024"
 output: html_document
 ---
@@ -172,4 +172,45 @@ dim(kaneko_dfm_study1)
 ## Exercises
 
 1. Estimate a wordfish model for the @kaneko_estimating_2021 data
+```{r}
+#### estimate the Wordfish model ####
+set.seed(123L) #Is other seed setting available? 
+
+kaneko_dfm_results <- textmodel_wordfish(kaneko_dfm_study1, 
+                                             sparse = TRUE)
+```
+
+results
+```{r}
+summary(kaneko_dfm_results)
+```
+
 2. Visualize the results
+
+
+```{r}
+textplot_scale1d(kaneko_dfm_results)
+```
+Plotting the "features,"
+```{r}
+textplot_scale1d(kaneko_dfm_results, margin = "features")
+```
+Features are not described properly, I guess, because they are written in Japanese. 
+So I need to look features and figure out what they mean.
+
+Look features
+```{r}
+features_kaneko <- kaneko_dfm_results[["features"]]
+
+betas_kaneko <- kaneko_dfm_results[["beta"]]
+
+feat_betas_kaneko <- as.data.frame(cbind(features_kaneko, betas_kaneko))
+feat_betas_kaneko$betas_kaneko <- as.numeric(feat_betas_kaneko$betas_kaneko)
+
+feat_betas_kaneko %>%
+  arrange(desc(betas_kaneko)) %>%
+  top_n(20) %>% 
+  kbl() %>%
+  kable_styling(bootstrap_options = "striped")
+```
+So now we can check which features are evaluated with high betas.
